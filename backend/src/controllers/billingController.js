@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "";
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:3000").trim().replace(/\/$/, "");
 const stripe = stripeSecretKey ? new Stripe(stripeSecretKey) : null;
 const demoSubscriptionMode = process.env.DEMO_SUBSCRIPTION_MODE === "true" || !stripe;
 

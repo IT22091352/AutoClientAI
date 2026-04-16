@@ -17,15 +17,19 @@ const app = express();
 // connect DB
 connectDB();
 
+const normalizeOrigin = (value) => value.trim().replace(/\/$/, "");
+
 const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:5173")
   .split(",")
-  .map((origin) => origin.trim())
+  .map(normalizeOrigin)
   .filter(Boolean);
 
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      const normalizedOrigin = origin ? normalizeOrigin(origin) : origin;
+
+      if (!origin || allowedOrigins.includes(normalizedOrigin)) {
         callback(null, true);
         return;
       }

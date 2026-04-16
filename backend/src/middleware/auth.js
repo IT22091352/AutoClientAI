@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import User from "../models/User.js";
-import { isDBConnected } from "../config/db.js";
+import { isDBConnected, waitForDBReady } from "../config/db.js";
 import { findLocalUserById, upsertLocalUser } from "../config/localStore.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
@@ -34,6 +34,8 @@ export const protect = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+
+    await waitForDBReady();
 
     if (isDBConnected() && mongoose.Types.ObjectId.isValid(decoded.id)) {
       const user = await User.findById(decoded.id).select("-password");

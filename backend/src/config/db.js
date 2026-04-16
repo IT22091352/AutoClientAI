@@ -5,6 +5,7 @@ mongoose.set("bufferCommands", false);
 const RECONNECT_INTERVAL_MS = Number(process.env.MONGO_RECONNECT_INTERVAL_MS || 30000);
 let reconnectTimer = null;
 let retryAttempt = 0;
+let connectionPromise = null;
 
 const scheduleReconnect = () => {
   if (reconnectTimer || mongoose.connection.readyState === 1) {
@@ -45,33 +46,51 @@ const connectWithUri = async (uri, label) => {
   }
 };
 
-export const connectDB = async () => {
-  const primaryUri = process.env.MONGO_URI;
-  const fallbackUri = process.env.MONGO_URI_FALLBACK;
-  if (!primaryUri && !fallbackUri) {
-    console.warn("MONGO_URI and MONGO_URI_FALLBACK are missing. Continuing without MongoDB.");
+export const connectDB = () => {
+  if (mongoose.connection.readyState === 1) {
+    return Promise.resolve(true);
+  }
+
+  if (connectionPromise) {
+    return connectionPromise;
+  }
+
+  connectionPromise = (async () => {
+    const primaryUri = process.env.MONGO_URI;
+    const fallbackUri = process.env.MONGO_URI_FALLBACK;
+
+    if (!primaryUri && !fallbackUri) {
+      console.warn("MONGO_URI and MONGO_URI_FALLBACK are missing. Continuing without MongoDB.");
+      scheduleReconnect();
+      return false;
+    }
+
+    if (primaryUri) {
+      const primaryConnected = await connectWithUri(primaryUri, "primary");
+      if (primaryConnected) {
+        return true;
+      }
+    }
+
+    if (fallbackUri) {
+      console.warn("Using fallback connection");
+      const fallbackConnected = await connectWithUri(fallbackUri, "fallback");
+      if (fallbackConnected) {
+        return true;
+      }
+    }
+
+    console.warn("MongoDB unavailable. Continuing without persistence.");
     scheduleReconnect();
     return false;
-  }
+  })()
+    .finally(() => {
+      connectionPromise = null;
+    });
 
-  if (primaryUri) {
-    const primaryConnected = await connectWithUri(primaryUri, "primary");
-    if (primaryConnected) {
-      return true;
-    }
-  }
-
-  if (fallbackUri) {
-    console.warn("Using fallback connection");
-    const fallbackConnected = await connectWithUri(fallbackUri, "fallback");
-    if (fallbackConnected) {
-      return true;
-    }
-  }
-
-  console.warn("MongoDB unavailable. Continuing without persistence.");
-  scheduleReconnect();
-  return false;
+  return connectionPromise;
 };
+
+export const waitForDBReady = async () => connectDB();
 
 export const isDBConnected = () => mongoose.connection.readyState === 1;

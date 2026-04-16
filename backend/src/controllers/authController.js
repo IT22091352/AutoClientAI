@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { isDBConnected } from "../config/db.js";
+import { waitForDBReady } from "../config/db.js";
 import { countLocalUsers, findLocalUserByEmail, upsertLocalUser } from "../config/localStore.js";
 import { randomUUID } from "crypto";
 
@@ -49,6 +50,8 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const normalizedEmail = email.trim().toLowerCase();
+
+    await waitForDBReady();
 
     if (!name || !email || !password) {
       return res.status(400).json({ msg: "Name, email, and password are required" });
@@ -122,6 +125,8 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const normalizedEmail = email.trim().toLowerCase();
+
+    await waitForDBReady();
 
     if (isDBConnected()) {
       const user = await User.findOne({ email: normalizedEmail }).select("+password");

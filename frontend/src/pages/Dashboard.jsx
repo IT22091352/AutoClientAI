@@ -309,70 +309,6 @@ export default function Dashboard() {
 
         {/* Main Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-          {/* WhatsApp Card */}
-          <section className="glass-card-lg p-4 sm:p-6 md:p-8 space-y-4 md:space-y-6">
-            <div>
-              <h3 className="text-xl font-bold text-white mb-2">💬 WhatsApp Connection</h3>
-              <p className="text-slate-400 text-sm">
-                Every account gets an isolated WhatsApp session. Scan the QR from WhatsApp Linked Devices.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {/* Info Banner */}
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-sm text-blue-200">
-                <span>✨</span> Complete your business profile to activate WhatsApp bot.
-              </div>
-
-              {/* QR Panel */}
-              <div className="bg-slate-800/30 border border-white/10 rounded-lg p-4 md:p-6 flex items-center justify-center min-h-[220px] sm:min-h-[280px]">
-                {qrCodeDataUrl ? (
-                  <img
-                    className="rounded-lg shadow-lg max-w-xs sm:max-w-sm w-full h-auto"
-                    src={qrCodeDataUrl}
-                    alt="WhatsApp QR code"
-                  />
-                ) : (
-                  <div className="text-center">
-                    <p className="text-slate-500 text-lg">📲 No QR generated yet</p>
-                    <p className="text-slate-600 text-sm mt-2">
-                      Save business details first, then generate QR code
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Locked Banners */}
-              {!canUseAutomation && (
-                <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4 text-sm text-orange-200">
-                  <span>⚠️</span> Free access limit reached. Upgrade plan to unlock WhatsApp automation.
-                </div>
-              )}
-
-              {!businessSaved && (
-                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-sm text-red-200">
-                  <span>🔒</span> Please complete business details first.
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <button
-                  className={`btn-primary w-full sm:flex-1 ${!canGenerateQr ? "opacity-50 cursor-not-allowed" : ""}`}
-                  onClick={handleGenerateQr}
-                  disabled={loadingQr || !canGenerateQr}
-                >
-                  {loadingQr ? "⏳ Generating..." : "📱 Generate QR"}
-                </button>
-                <button
-                  className="btn-secondary w-full sm:flex-1"
-                  onClick={refreshWhatsAppStatus}
-                >
-                  🔄 Refresh
-                </button>
-              </div>
-            </div>
-          </section>
 
           {/* Business Details Card */}
           <section className="glass-card-lg p-4 sm:p-6 md:p-8 space-y-4 md:space-y-6">
@@ -455,6 +391,74 @@ export default function Dashboard() {
               </button>
             </div>
           </section>
+
+          
+          {/* WhatsApp Card */}
+          <section className="glass-card-lg p-4 sm:p-6 md:p-8 space-y-4 md:space-y-6">
+            <div>
+              <h3 className="text-xl font-bold text-white mb-2">💬 WhatsApp Connection</h3>
+              <p className="text-slate-400 text-sm">
+                Every account gets an isolated WhatsApp session. Scan the QR from WhatsApp Linked Devices.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Info Banner */}
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-sm text-blue-200">
+                <span>✨</span> Complete your business profile to activate WhatsApp bot.
+              </div>
+
+              {/* QR Panel */}
+              <div className="bg-slate-800/30 border border-white/10 rounded-lg p-4 md:p-6 flex items-center justify-center min-h-[220px] sm:min-h-[280px]">
+                {qrCodeDataUrl ? (
+                  <img
+                    className="rounded-lg shadow-lg max-w-xs sm:max-w-sm w-full h-auto"
+                    src={qrCodeDataUrl}
+                    alt="WhatsApp QR code"
+                  />
+                ) : (
+                  <div className="text-center">
+                    <p className="text-slate-500 text-lg">📲 No QR generated yet</p>
+                    <p className="text-slate-600 text-sm mt-2">
+                      Save business details first, then generate QR code
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Locked Banners */}
+              {!canUseAutomation && (
+                <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4 text-sm text-orange-200">
+                  <span>⚠️</span> Free access limit reached. Upgrade plan to unlock WhatsApp automation.
+                </div>
+              )}
+
+              {!businessSaved && (
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-sm text-red-200">
+                  <span>🔒</span> Please complete business details first.
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                <button
+                  className={`btn-primary w-full sm:flex-1 ${!canGenerateQr ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={handleGenerateQr}
+                  disabled={loadingQr || !canGenerateQr}
+                >
+                  {loadingQr ? "⏳ Generating..." : "📱 Generate QR"}
+                </button>
+                <button
+                  className="btn-secondary w-full sm:flex-1"
+                  onClick={refreshWhatsAppStatus}
+                >
+                  🔄 Refresh
+                </button>
+              </div>
+            </div>
+          </section>
+
+          
         </div>
 
         {/* Subscription Card */}

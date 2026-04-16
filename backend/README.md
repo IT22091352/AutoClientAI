@@ -1,70 +1,65 @@
-# Getting Started with Create React App
+# AutoClient Backend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Express API for auth, billing, business profile management, WhatsApp session handling, and AI replies.
 
-## Available Scripts
+## Local Development
 
-In the project directory, you can run:
+1. Copy `.env.example` to `.env` and fill the values.
+2. Install dependencies:
 
-### `npm start`
+```bash
+npm install
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+3. Start server:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npm start
+```
 
-### `npm test`
+The API will run on `http://localhost:5000` by default.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Required Environment Variables
 
-### `npm run build`
+- `MONGO_URI`
+- `MONGO_URI_FALLBACK` (optional but recommended)
+- `OPENAI_API_KEY`
+- `JWT_SECRET`
+- `ENCRYPTION_KEY`
+- `FRONTEND_URL` (comma-separated list for CORS)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Optional:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- `PORT` (default `5000`)
+- `FREE_ACCESS_LIMIT` (default `100`)
+- `WHATSAPP_AUTO_REPLY_ENABLED` (`true` by default)
+- `WHATSAPP_FALLBACK_REPLY`
+- `WHATSAPP_AUTH_ROOT`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Render Deployment (Persistent Runtime)
 
-### `npm run eject`
+This backend must run in a persistent process for Baileys WhatsApp events (`messages.upsert`) to stay active.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Option A: Blueprint Deploy
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Push repository to GitHub.
+2. In Render, choose New + Blueprint.
+3. Select your repo and apply the included `render.yaml`.
+4. Set all required environment variables in Render.
+5. Deploy.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Option B: Manual Web Service
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- Runtime: Node
+- Root Directory: `backend`
+- Build Command: `npm install`
+- Start Command: `npm start`
 
-## Learn More
+Health check URL:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- `GET /`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Important Notes
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Do not host WhatsApp socket logic on serverless platforms for production auto-replies.
+- After backend deploy, update frontend `VITE_API_URL` to your Render backend URL and redeploy frontend.

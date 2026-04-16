@@ -9,16 +9,20 @@ const fallbackProductionApiBaseUrl = "https://auto-client-ai-5ohg.vercel.app";
 const hasValidConfiguredApiBaseUrl =
   configuredApiBaseUrl && !configuredApiBaseUrl.includes("your-backend-url.com");
 
+const stripTrailingSlash = (value) => value.replace(/\/+$/, "");
+
 const rawApiBaseUrl = isLocalDev
   ? "http://localhost:5000"
   : hasValidConfiguredApiBaseUrl
     ? configuredApiBaseUrl
     : fallbackProductionApiBaseUrl;
 
-const normalizedApiBaseUrl = rawApiBaseUrl
-  ? rawApiBaseUrl.endsWith("/api")
-    ? rawApiBaseUrl
-    : `${rawApiBaseUrl}/api`
+const sanitizedApiBaseUrl = rawApiBaseUrl ? stripTrailingSlash(rawApiBaseUrl) : "";
+
+const normalizedApiBaseUrl = sanitizedApiBaseUrl
+  ? sanitizedApiBaseUrl.endsWith("/api")
+    ? sanitizedApiBaseUrl
+    : `${sanitizedApiBaseUrl}/api`
   : "/api";
 
 const API = axios.create({

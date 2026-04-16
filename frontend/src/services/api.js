@@ -1,9 +1,25 @@
 import axios from "axios";
 
-const rawApiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const normalizedApiBaseUrl = rawApiBaseUrl.endsWith("/api")
-  ? rawApiBaseUrl
-  : `${rawApiBaseUrl}/api`;
+const isLocalDev = Boolean(
+  ["localhost", "127.0.0.1"].includes(window.location.hostname)
+);
+
+const configuredApiBaseUrl = import.meta.env.VITE_API_URL;
+const fallbackProductionApiBaseUrl = "https://auto-client-ai-5ohg.vercel.app";
+const hasValidConfiguredApiBaseUrl =
+  configuredApiBaseUrl && !configuredApiBaseUrl.includes("your-backend-url.com");
+
+const rawApiBaseUrl = isLocalDev
+  ? "http://localhost:5000"
+  : hasValidConfiguredApiBaseUrl
+    ? configuredApiBaseUrl
+    : fallbackProductionApiBaseUrl;
+
+const normalizedApiBaseUrl = rawApiBaseUrl
+  ? rawApiBaseUrl.endsWith("/api")
+    ? rawApiBaseUrl
+    : `${rawApiBaseUrl}/api`
+  : "/api";
 
 const API = axios.create({
   baseURL: normalizedApiBaseUrl,

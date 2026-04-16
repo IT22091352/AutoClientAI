@@ -195,3 +195,19 @@ export function getUserSessionStatus(userId) {
     updatedAt: session.updatedAt || null,
   };
 }
+
+export async function waitForSessionQr(userId, timeoutMs = 8000, pollIntervalMs = 250) {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const status = getUserSessionStatus(userId);
+
+    if (status.connected || status.qrCodeDataUrl || status.lastError) {
+      return status;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+  }
+
+  return getUserSessionStatus(userId);
+}

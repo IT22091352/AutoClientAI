@@ -83,6 +83,18 @@ export default function Dashboard() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!["connecting", "qr", "reconnecting"].includes(whatsAppStatus)) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      refreshWhatsAppStatus();
+    }, 2500);
+
+    return () => window.clearInterval(intervalId);
+  }, [refreshWhatsAppStatus, whatsAppStatus]);
+
   const loadBusiness = useCallback(async () => {
     try {
       const res = await getBusinessProfile();

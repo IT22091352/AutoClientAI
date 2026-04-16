@@ -1,4 +1,8 @@
-import { ensureUserSession, getUserSessionStatus } from "../services/whatsappManager.js";
+import {
+  ensureUserSession,
+  getUserSessionStatus,
+  waitForSessionQr,
+} from "../services/whatsappManager.js";
 import {
   getBusinessProfileForUser,
   isBusinessProfileComplete,
@@ -17,7 +21,7 @@ export const generateQr = async (req, res) => {
     }
 
     await ensureUserSession(userId);
-    const status = getUserSessionStatus(userId);
+    const status = await waitForSessionQr(userId);
 
     return res.json({
       message: status.qrCodeDataUrl

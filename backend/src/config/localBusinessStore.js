@@ -1,10 +1,13 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
+import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dataDir = path.resolve(__dirname, "../data");
+const dataDir = process.env.VERCEL
+  ? path.join(os.tmpdir(), "autoclient-ai", "data")
+  : path.resolve(__dirname, "../data");
 const businessFile = path.join(dataDir, "business.json");
 
 async function ensureStore() {

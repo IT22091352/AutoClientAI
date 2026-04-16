@@ -56,7 +56,25 @@ export default function Signup({ onNavigateLogin }) {
         onNavigateLogin();
       }
     } catch (err) {
-      setError(err.response?.data?.msg || "Signup failed. Please try again.");
+      const responseData = err?.response?.data;
+      const parsedData =
+        typeof responseData === "string"
+          ? (() => {
+              try {
+                return JSON.parse(responseData);
+              } catch {
+                return { msg: responseData };
+              }
+            })()
+          : responseData || {};
+
+      const backendMessage =
+        parsedData.msg ||
+        parsedData.error ||
+        err?.message ||
+        "Signup failed. Please try again.";
+
+      setError(backendMessage);
     } finally {
       setLoading(false);
     }

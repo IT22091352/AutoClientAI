@@ -15,6 +15,7 @@ import { generateReplyForUser } from "./aiService.js";
 
 const userSessions = new Map();
 const autoReplyEnabled = String(process.env.WHATSAPP_AUTO_REPLY_ENABLED || "true").toLowerCase() === "true";
+const fallbackReply = process.env.WHATSAPP_FALLBACK_REPLY || "Hi! Thanks for your message. We received it and will get back to you shortly.";
 const authRoot = process.env.WHATSAPP_AUTH_ROOT
   ? path.resolve(process.env.WHATSAPP_AUTH_ROOT)
   : path.join(os.tmpdir(), "autoclient-auth", "users");
@@ -158,19 +159,27 @@ export async function ensureUserSession(userId, options = {}) {
         return;
       }
 
-      const reply = await generateReplyForUser({
-        userId: normalizedUserId,
-        message: text,
-        phone: from,
-      });
+      let reply = "";
 
-      await sock.sendMessage(from, { text: reply });
+      try {
+        reply = await generateReplyForUser({
+          userId: normalizedUserId,
+          message: text,
+          phone: from,
+        });
+      } catch (error) {
+        console.error("AI reply generation failed:", error.message);
+      }
+
+      const finalReply = String(reply || "").trim() || fallbackReply;
+
+      await sock.sendMessage(from, { text: finalReply });
 
       if (canPersistMessages) {
         await Message.create({
           user: normalizedUserId,
           sender: "ai",
-          content: reply,
+          content: finalReply,
           phone: from,
           whatsappJid: from,
         });

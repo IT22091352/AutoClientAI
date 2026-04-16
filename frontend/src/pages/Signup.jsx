@@ -72,7 +72,7 @@ export default function Signup({ onNavigateLogin }) {
         parsedData.msg ||
         parsedData.error ||
         err?.message ||
-        "Signup failed. Please try again.";
+        `Signup failed${err?.response?.status ? ` (${err.response.status})` : ""}. Please try again.`;
 
       setError(backendMessage);
     } finally {

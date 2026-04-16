@@ -8,6 +8,7 @@ import billingRoutes from "./routes/billingRoutes.js";
 import premiumRoutes from "./routes/premiumRoutes.js";
 import whatsappRoutes from "./routes/whatsappRoutes.js";
 import businessRoutes from "./routes/businessRoutes.js";
+import { pathToFileURL } from "url";
 
 dotenv.config();
 
@@ -46,8 +47,11 @@ app.get("/", (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+const isMainModule = process.argv[1]
+  ? pathToFileURL(process.argv[1]).href === import.meta.url
+  : false;
 
-if (!process.env.VERCEL) {
+if (isMainModule && !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

@@ -14,7 +14,7 @@ import { isDBConnected } from "../config/db.js";
 import { generateReplyForUser } from "./aiService.js";
 
 const userSessions = new Map();
-const autoReplyEnabled = String(process.env.WHATSAPP_AUTO_REPLY_ENABLED || "false").toLowerCase() === "true";
+const autoReplyEnabled = String(process.env.WHATSAPP_AUTO_REPLY_ENABLED || "true").toLowerCase() === "true";
 const authRoot = process.env.WHATSAPP_AUTH_ROOT
   ? path.resolve(process.env.WHATSAPP_AUTH_ROOT)
   : path.join(os.tmpdir(), "autoclient-auth", "users");

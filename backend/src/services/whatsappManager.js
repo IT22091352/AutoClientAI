@@ -5,6 +5,7 @@ import makeWASocket, {
 } from "@whiskeysockets/baileys";
 import QRCode from "qrcode";
 import path from "path";
+import os from "os";
 import { mkdir } from "fs/promises";
 import mongoose from "mongoose";
 import Message from "../models/Message.js";
@@ -13,7 +14,9 @@ import { isDBConnected } from "../config/db.js";
 import { generateReplyForUser } from "./aiService.js";
 
 const userSessions = new Map();
-const authRoot = path.resolve(process.cwd(), "auth", "users");
+const authRoot = process.env.VERCEL
+  ? path.join(os.tmpdir(), "autoclient-auth", "users")
+  : path.resolve(process.cwd(), "auth", "users");
 
 function emptyStatus(userId) {
   return {

@@ -73,7 +73,7 @@ export default function Dashboard() {
       } else {
         setWhatsAppMessage(
           status.connected
-            ? "Your WhatsApp session is connected. AI auto-replies are active."
+            ? "Your WhatsApp session is connected successfully."
             : "Generate a QR and scan with WhatsApp Linked Devices."
         );
       }
